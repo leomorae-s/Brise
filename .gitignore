@@ -1,0 +1,13 @@
+# Gradle
+.gradle/
+build/
+*/build/
+gradle-app.setting
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+*.iws
+
+# Mac/OS
+.DS_Store
