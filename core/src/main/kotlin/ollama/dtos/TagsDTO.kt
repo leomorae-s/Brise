@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TagsResponse(
-    val models: List<OllamaModel>
+    val models: List<OllamaModel>,
 )
 
 @Serializable
@@ -15,7 +15,7 @@ data class OllamaModel(
     @SerialName("modified_at")
     val modifiedAt: String,
     val size: Long,
-    val details: ModelDetails
+    val details: ModelDetails,
 )
 
 @Serializable
@@ -26,5 +26,5 @@ data class ModelDetails(
     @SerialName("parameter_size")
     val parameterSize: String,
     @SerialName("quantization_level")
-    val quantizationLevel: String
+    val quantizationLevel: String,
 )
