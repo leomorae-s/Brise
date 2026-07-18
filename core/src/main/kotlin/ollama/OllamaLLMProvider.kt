@@ -4,9 +4,15 @@ import domain.LLMProvider
 import domain.ModelInfo
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.request.get
-import kotlinx.coroutines.runBlocking
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import ollama.dtos.DetailsResponse
 import ollama.dtos.OllamaModel
 import ollama.dtos.TagsResponse
 
@@ -26,4 +32,21 @@ class OllamaLLMProvider(private val client: HttpClient): LLMProvider {
         return response.models.map { it.toDomain() }
     }
 
+    override suspend fun listRunning(): List<ModelInfo> {
+        val response: TagsResponse = client.get("api/ps").body()
+        return response.models.map { it.toDomain() }
+    }
+
+    override suspend fun showModelDetails(model: String): DetailsResponse {
+        val jsobBody = buildJsonObject { put("model", model) }
+        val response: HttpResponse =
+            client.post("api/show") {
+                contentType(ContentType.Application.Json)
+                setBody(jsobBody)
+            }
+
+        val parsedResponse: DetailsResponse = response.body()
+
+        return parsedResponse
+    }
 }

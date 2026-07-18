@@ -19,10 +19,20 @@ data class OllamaModel(
 )
 
 @Serializable
+data class DetailsResponse(
+    val parameters: String,
+    val license: String,
+    val capabilities: List<String>,
+    @SerialName("modified_at")
+    val modifiedAt: String,
+    val details: ModelDetails,
+)
+
+@Serializable
 data class ModelDetails(
     val format: String,
     val family: String,
-    val families: List<String>? = null,
+    var families: List<String>? = null,
     @SerialName("parameter_size")
     val parameterSize: String,
     @SerialName("quantization_level")
