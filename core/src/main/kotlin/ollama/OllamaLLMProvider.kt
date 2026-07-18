@@ -4,6 +4,7 @@ import domain.LLMProvider
 import domain.ModelInfo
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -16,16 +17,16 @@ import ollama.dtos.DetailsResponse
 import ollama.dtos.OllamaModel
 import ollama.dtos.TagsResponse
 
-
-class OllamaLLMProvider(private val client: HttpClient): LLMProvider {
-
-    private fun OllamaModel.toDomain() = ModelInfo(
-        name = name,
-        sizeBytes = size,
-        parameterSize = details.parameterSize,
-        quantization = details.quantizationLevel
-    )
-
+class OllamaLLMProvider(
+    private val client: HttpClient,
+) : LLMProvider {
+    private fun OllamaModel.toDomain() =
+        ModelInfo(
+            name = name,
+            sizeBytes = size,
+            parameterSize = details.parameterSize,
+            quantization = details.quantizationLevel,
+        )
 
     override suspend fun list(): List<ModelInfo> {
         val response: TagsResponse = client.get("api/tags").body()
@@ -48,5 +49,13 @@ class OllamaLLMProvider(private val client: HttpClient): LLMProvider {
         val parsedResponse: DetailsResponse = response.body()
 
         return parsedResponse
+    }
+
+    override suspend fun deleteModel(model: String) {
+        val jsonBody = buildJsonObject { put("model", model) }
+        client.delete("/api/delete") {
+            contentType(ContentType.Application.Json)
+            setBody(jsonBody)
+        }
     }
 }
