@@ -11,4 +11,3 @@ interface LLMProvider {
 
     suspend fun showModelDetails(model: String): DetailsResponse
 }
-

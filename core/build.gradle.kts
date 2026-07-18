@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(ktorLibs.plugins.ktor)
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("dev.detekt")
 }
 
 group = "com.brise"
@@ -24,4 +26,9 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
 }
