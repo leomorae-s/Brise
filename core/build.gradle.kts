@@ -26,9 +26,17 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 detekt {
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt/detekt.yml")
+}
+
+tasks.test {
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
 }

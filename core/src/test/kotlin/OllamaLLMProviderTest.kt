@@ -4,8 +4,10 @@ import kotlinx.coroutines.test.runTest
 import ollama.OllamaClientFactory
 import ollama.OllamaLLMProvider
 import kotlin.test.Test
+import org.junit.jupiter.api.Tag
 
 class OllamaLLMProviderTest {
+    @Tag("integration")
     @Test
     fun `list return availble models`(): Unit =
         runTest {
