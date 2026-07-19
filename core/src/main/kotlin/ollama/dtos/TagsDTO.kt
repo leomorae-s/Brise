@@ -38,3 +38,11 @@ data class ModelDetails(
     @SerialName("quantization_level")
     val quantizationLevel: String,
 )
+
+@Serializable
+data class PullProgress(
+    val status: String,
+    val digest: String? = null,
+    val total: Long? = null,
+    val completed: Long? = null,
+)

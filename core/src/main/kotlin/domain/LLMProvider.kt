@@ -1,6 +1,8 @@
 package domain
 
+import kotlinx.coroutines.flow.Flow
 import ollama.dtos.DetailsResponse
+import ollama.dtos.PullProgress
 
 interface LLMProvider {
     suspend fun list(): List<ModelInfo>
@@ -10,4 +12,6 @@ interface LLMProvider {
     suspend fun showModelDetails(model: String): DetailsResponse
 
     suspend fun deleteModel(model: String): Unit
+
+    fun pullModel(model: String): Flow<PullProgress>
 }

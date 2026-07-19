@@ -3,8 +3,8 @@ import io.ktor.client.plugins.logging.LogLevel
 import kotlinx.coroutines.test.runTest
 import ollama.OllamaClientFactory
 import ollama.OllamaLLMProvider
-import kotlin.test.Test
 import org.junit.jupiter.api.Tag
+import kotlin.test.Test
 
 class OllamaLLMProviderTest {
     @Tag("integration")
