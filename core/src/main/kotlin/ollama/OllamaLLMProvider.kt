@@ -21,6 +21,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import ollama.dtos.DetailsResponse
+import ollama.dtos.GenerateResponse
 import ollama.dtos.OllamaModel
 import ollama.dtos.PullProgress
 import ollama.dtos.TagsResponse
@@ -84,6 +85,34 @@ class OllamaLLMProvider(
                 val line = channel.readLine() ?: break
                 if (line.isBlank()) continue
                 val progress: PullProgress = Json.decodeFromString(line)
+                emit(progress)
+            }
+        }
+
+    override fun generate(
+        model: String,
+        prompt: String,
+    ): Flow<GenerateResponse> =
+        flow {
+            val jsonBody =
+                buildJsonObject {
+                    put("model", model)
+                    put("prompt", prompt)
+                    put("think", false)
+                }
+
+            val response: HttpResponse =
+                client.post("api/generate") {
+                    contentType(ContentType.Application.Json)
+                    setBody(jsonBody)
+                    timeout { requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS }
+                }
+
+            val channel = response.bodyAsChannel()
+            while (!channel.isClosedForRead) {
+                val line = channel.readLine() ?: break
+                if (line.isBlank()) continue
+                val progress: GenerateResponse = Json.decodeFromString(line)
                 emit(progress)
             }
         }

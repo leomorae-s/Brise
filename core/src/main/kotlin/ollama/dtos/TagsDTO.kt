@@ -1,7 +1,9 @@
 package ollama.dtos
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 @Serializable
 data class TagsResponse(
@@ -45,4 +47,20 @@ data class PullProgress(
     val digest: String? = null,
     val total: Long? = null,
     val completed: Long? = null,
+)
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
+data class GenerateResponse(
+    val model: String,
+    @SerialName("created_at")
+    val createdAt: String,
+    val response: String,
+    val thinking: String? = null,
+    val done: Boolean,
+    @SerialName("done_reason")
+    val doneReason: String? = null,
+    @SerialName("total_duration")
+    val totalDuration: Long? = null,
 )
