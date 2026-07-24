@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package ollama.dtos
 
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -49,7 +51,6 @@ data class PullProgress(
     val completed: Long? = null,
 )
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
 data class GenerateResponse(
@@ -58,6 +59,29 @@ data class GenerateResponse(
     val createdAt: String,
     val response: String,
     val thinking: String? = null,
+    val done: Boolean,
+    @SerialName("done_reason")
+    val doneReason: String? = null,
+    @SerialName("total_duration")
+    val totalDuration: Long? = null,
+)
+
+@Serializable
+@JsonIgnoreUnknownKeys
+data class Message(
+    val role: String,
+    val content: String,
+    val thinking: String? = null,
+    val images: List<String>? = null,
+)
+
+@JsonIgnoreUnknownKeys
+@Serializable
+data class ChatResponse(
+    val model: String,
+    @SerialName("created_at")
+    val createdAt: String,
+    val message: Message,
     val done: Boolean,
     @SerialName("done_reason")
     val doneReason: String? = null,

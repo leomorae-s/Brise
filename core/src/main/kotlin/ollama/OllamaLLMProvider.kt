@@ -20,8 +20,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import ollama.dtos.ChatResponse
 import ollama.dtos.DetailsResponse
 import ollama.dtos.GenerateResponse
+import ollama.dtos.Message
 import ollama.dtos.OllamaModel
 import ollama.dtos.PullProgress
 import ollama.dtos.TagsResponse
@@ -113,6 +116,37 @@ class OllamaLLMProvider(
                 val line = channel.readLine() ?: break
                 if (line.isBlank()) continue
                 val progress: GenerateResponse = Json.decodeFromString(line)
+                emit(progress)
+            }
+        }
+
+    override fun chat(
+        model: String,
+        messages: List<Message>,
+        thinking: Boolean,
+    ): Flow<ChatResponse> =
+        flow {
+            val jsonBody =
+                buildJsonObject {
+                    put("model", model)
+                    putJsonArray("messages") {
+                        messages.forEach { msg ->
+                            add(Json.encodeToJsonElement(Message.serializer(), msg))
+                        }
+                    }
+                    put("think", thinking)
+                }
+            val response: HttpResponse =
+                client.post("api/chat") {
+                    contentType(ContentType.Application.Json)
+                    setBody(jsonBody)
+                    timeout { requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS }
+                }
+            val channel = response.bodyAsChannel()
+            while (!channel.isClosedForRead) {
+                val line = channel.readLine() ?: break
+                if (line.isBlank()) continue
+                val progress: ChatResponse = Json.decodeFromString(line)
                 emit(progress)
             }
         }
